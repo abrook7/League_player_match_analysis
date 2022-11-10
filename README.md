@@ -6,6 +6,14 @@ information into an Amazon MySQL RDS micro instance. The data was then analyzed 
 Tableau to build out a dashboard which can be accessed in the chrome_proxy.exe file or at the link here: 
 https://public.tableau.com/app/profile/aidan2791/viz/LeagueofLegendsPlayerRankedMatchHistoryInsights/Champion#1
 
+The contents of each file are as follows:
+- _MySQL_queries_ folder is a folder with 3 different SQL queries for information.
+- _chrome_proxy.exe_ is a link to the Tableau Public dashboard I created for this project.
+- _database_lol.hyper_ is the database extract used to publish the Tableau Public dashboard, it does not need to be accessed.
+- _lol_queues.json_ is a JSON file with queue ids and their corresponding queue names.
+- _mysql_player_match_history_censored.py_ is the Python script file that extracts the data and loads it into the Amazon MySQL RDS.
+- _queue_ids_censored.py_ is the Python script file that extracts the queue data from lol_queues.json and loads them into the RDS.
+
 I also wrote a medium article which is the same as the rest of this README. It can be found here: https://medium.com/p/4d52678b563c/edit
 
 
