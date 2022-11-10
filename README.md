@@ -6,6 +6,8 @@ information into an Amazon MySQL RDS micro instance. The data was then analyzed 
 Tableau to build out a dashboard which can be accessed in the chrome_proxy.exe file or at the link here: 
 https://public.tableau.com/app/profile/aidan2791/viz/LeagueofLegendsPlayerRankedMatchHistoryInsights/Champion#1
 
+![Player ranked match insights dashboard](https://miro.medium.com/max/828/1*NnSNjYagpmX5Y8rR4M6GAA.png)
+
 The contents of each file are as follows:
 - _MySQL_queries_ folder is a folder with 3 different SQL queries for information.
 - _chrome_proxy.exe_ is a link to the Tableau Public dashboard I created for this project.
@@ -26,6 +28,8 @@ I am doing well, and where I can clean up my execution in order to increase my r
 history. I do want to add a caveat to my work as a lot of good conclusions can be drawn from data, but there are certain parts of the game 
 that don't show up in my data such as items purchased, decision making, or poorly playing teammates. 
 
+![Photo by Hi Geoffrey on ‘Your First Game’](https://miro.medium.com/max/828/1*qlfdqQFuav2OfYGWdIwxIw.png)
+
 ## Riot API
 
 The first step, besides playing games of League of Legends, is to access the player information and match history using the Riot API. To do 
@@ -36,29 +40,53 @@ collect match history information for a particular player.
 - Match V5 - puuid: will return a list of match id's between 0 and 100 id's long of the most recent matches played by the player's puuid.
 - Match V5 - matches: returns a JSON formatted set of match infomation for a given match id.
 
+![Snippet from my code](https://miro.medium.com/max/828/1*ol5OOjBcMaVB7YEIktaTjw.png)
+
 ## Accessing API Information and creating a basic ETL
 
 Next, I created a Python script to access these API's and used the following sequence of steps to write my ETL script that extracts the match 
 data into JSON format, transforms the data into a dataframe, and loads the dataframe as a table into the MySQL Amazon RDS.
 
+![libraries](https://miro.medium.com/max/640/1*4pdzN1RZ8NLgs7pHbgHwwQ.png)
+
 1. Starting by importing the needed libraries: requests, pandas, time, pymysql, numpy, and sqlalchemy.
+
+![Initializing variables](https://miro.medium.com/max/828/1*pwyjXt_05Hb6UnrIn5yxsQ.png)
+
 2. Initializing the API key, player-match variables, Amazon RDS connection information, the sqlalchemy engine, connecting to the MySQL RDS, and 
 initializing the final dataframe.
+
+![Script main section](https://miro.medium.com/max/828/1*zWssS468dtSutjbjpJugZA.png)
+
 3. Then creating the main section where we call the create_table function, get_player_match_information function, and load the dataframe into 
 our MySQL database.
+
+![Create table function](https://miro.medium.com/max/828/1*0l9thrsbaGybvcxKZVvVIQ.png)
+
 4. The first function that is called uses a pymysql cursor to execute SQL code where a table is created if it does not already exist in the form 
 of 'player_name'_match_info where player_name is one of the initialized variables.
+
+![Get puuid using Riot API](https://miro.medium.com/max/828/1*QpmiimjU6PRIpTttvxW3Zg.png)
+
 5. Next the get_player_match function is called in our main script and the empty dataframe (df) is input and the populated dataframe df is 
 expected as the output. The get_player_match function first calls the get_player_id function to retreive the puuid from the Riot API.
+
+![get_new_matches](https://miro.medium.com/max/828/1*4-vpivhEyB4pAEVo2iWkRw.png)
+
 6. Our next function is then called, get_new_matches which first uses the puuid to extract the match_list from the Riot API. The db_matches 
 variable is then created and queries our MySQL RDS to compare to the match_list extracted from the Riot API. The if statement checks if the table 
 is empty or not and then the for loop goes through each match in match_list and checks if the id is already in the RDS and only saves the match_ids 
 that are unique to match_list and returns a dataframe containing these ids.
+
+![get_player_match_information function](https://miro.medium.com/max/828/1*FJ34p57DFWGtXh8QeDA4_g.png)
+
 7. Lastly our get_player_match_information function checks if the match_list is empty (no new matches were played) and accesses the Riot API for 
 each unique match; Looping through each player until the correct one (based on puuid) is reached and then saving the information to the dataframe 
 and returning it once all matches have been saved.
 
 ## JSON ETL Script
+
+![queue_ids.py](https://miro.medium.com/max/828/1*H69o4esQv2gZWj43EdffLQ.png)
 
 Since the game_mode attribute found in the match information from the Riot API does not distinguish between ranked, casual, or versus AI the queue_id 
 must be used to distinguish between these modes. The script, queue_ids.py, shown above does that by loading a JSON file that Riot provides in their 
@@ -66,11 +94,15 @@ documentation, parsing the queue id with the matching queue name, and then savin
 
 ## Querying the MySQL RDS
 
+![MySQL query](https://miro.medium.com/max/828/1*VSkQ_JANwjf_ck77w7KTrQ.png)
+
 We can see the newly created tables in our RDS by accessing the database using MySQL workbench and do a simply select all query to see our data. This 
 table will be used in the creation of my Tableau dashboard, but we can conduct some queries to determine some player stats.
 
 I wanted to include 3 stats onto my dashboard: Champion with the most ranked solo queue games played, Champion with the most ranked solo queue games 
 won, and Champion with the highest kill game in ranked solo. To do this I wrote three separate queries.
+
+![MySQL queries for special player stats](https://miro.medium.com/max/750/1*ueDJGp38nfRaLk5-7q1_cg.png)
 
 Each query was written to be filtered by the queue id '420' which is the identifier for ranked solo queue matches and were grouped by the champion 
 played. The difference in each query were the aggregate functions that I used: MAX(kills) for highest kill game, COUNT(champion_played) for the 
@@ -83,6 +115,8 @@ each champion so I did not make that change.
 Lastly I connected my Tableau Desktop program with the MySQL RDS to create my final dashboard. I created a relationship between the queue_id_info and
 MiniSoloCup_match_info data sources in order to filter by the queue name rather than the queue id. I created 4 worksheets to evaluate my creep score (cs)
 per minute, my kills and assists per death ratio, damage per minute, and win rate for each champion in ranked solo queue using calculated fields.
+
+![Player ranked match insights dashboard](https://miro.medium.com/max/828/1*NnSNjYagpmX5Y8rR4M6GAA.png)
 
 Using all of the information I have gathered I created and published the finished dashboard to Tableau Public and you may view it here. Using the 
 information and the dashboard we can filter by the champion played as well as the number of matches that were played with that champion.
@@ -107,6 +141,8 @@ strengths, weaknesses, and difficulty levels. If my goal is to improve and rank 
 
 Going forward I will need to focus on my csing to keep my income high, decrease my champion pool so I can master individual mechanics, and play champions 
 such as Varus.
+
+![Vector art by K3star](https://miro.medium.com/max/750/1*nyvW7C8NYBn2QhuUAo9wYg.jpeg)
 
 ## Reflection
 
