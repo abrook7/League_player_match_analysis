@@ -14,7 +14,8 @@ The contents of each file are as follows:
 - _mysql_player_match_history_censored.py_ is the Python script file that extracts the data and loads it into the Amazon MySQL RDS.
 - _queue_ids_censored.py_ is the Python script file that extracts the queue data from lol_queues.json and loads them into the RDS.
 
-I also wrote a medium article which is the same as the rest of this README. It can be found here: https://medium.com/p/4d52678b563c/edit
+I also wrote a medium article which is the same as the rest of this README. It can be found here: 
+https://medium.com/@aidanzhaobrook/data-analysis-etl-league-of-legends-project-4d52678b563c
 
 
 ## Data Analysis & ETL - League of Legends Project
